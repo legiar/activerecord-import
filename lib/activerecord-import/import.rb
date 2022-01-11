@@ -799,7 +799,7 @@ class ActiveRecord::Base
 
       columns_sql = "(#{column_names.map { |name| connection.quote_column_name(name) }.join(',')})"
       pre_sql_statements = connection.pre_sql_statements( options )
-      insert_sql = ['INSERT', pre_sql_statements, "INTO #{quoted_table_name} #{columns_sql} VALUES "]
+      insert_sql = ['INSERT', pre_sql_statements, "INTO #{options[:table_name] || quoted_table_name} #{columns_sql} VALUES "]
       insert_sql = insert_sql.flatten.join(' ')
       values_sql = values_sql_for_columns_and_attributes(columns, array_of_attributes)
 
@@ -808,7 +808,7 @@ class ActiveRecord::Base
       results = []
       if supports_import?
         # generate the sql
-        post_sql_statements = connection.post_sql_statements( quoted_table_name, options )
+        post_sql_statements = connection.post_sql_statements( options[:table_name] || quoted_table_name, options )
         import_size = values_sql.size
 
         batch_size = options[:batch_size] || import_size
